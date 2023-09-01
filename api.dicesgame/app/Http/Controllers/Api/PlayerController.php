@@ -10,6 +10,11 @@ use App\Models\User;
 
 class PlayerController extends Controller
 {
+    /*public function __construct(){
+        $this->middleware('auth:api');
+    }*/
+    
+    
     /**
      * Display a listing of the resource.
      */
@@ -24,7 +29,7 @@ class PlayerController extends Controller
     public function store()
     {
 
-        //$user = Auth::user();
+        //$user = auth()->user();
 
         /*if($user->player()){
 

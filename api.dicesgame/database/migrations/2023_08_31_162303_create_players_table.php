@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('players', function (Blueprint $table) {
             $table->id();
+            $table->integer('numberOfGames') -> nullable();
+            $table->integer('wonGames') -> nullable();
+            $table->integer('percentWon') -> nullable();
+            $table->foreignId('user_id') ->constrained() -> onDelete('cascade') ->onUpdate('cascade');
             $table->timestamps();
         });
     }

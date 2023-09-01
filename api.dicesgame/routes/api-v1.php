@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PlayerController;
 use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,8 +19,9 @@ use App\Http\Controllers\Api\RegisterController;
 
 
 
-
 Route::post('/register', [RegisterController::class, 'store'])->name('users.create');
+
+Route::post('/login', [LoginController::class, 'login'])->name('users.login');
 
 Route::post('/players', [PlayerController::class, 'store'])->name('players.create');
 

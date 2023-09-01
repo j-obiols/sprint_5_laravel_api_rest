@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Player;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +13,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $this-> call(UserSeeder::class);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $this-> call(PlayerSeeder::class);
+
+        $players=Player::all();
+
+        foreach($players as $player) {
+           
+            $wonGames = $player -> wonGames;
+            $numberOfGames = $player -> numberOfGames;
+            $player -> setPercentWon((int)($wonGames/$numberOfGames *100));
+            $player -> save();
+
+        }
+      
     }
 }

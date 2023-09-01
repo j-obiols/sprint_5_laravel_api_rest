@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\RegisterController;
 
 Route::post('/register', [RegisterController::class, 'store'])->name('users.create');
 
+Route::post('/players', [PlayerController::class, 'store'])->name('players.create');
 
 /*Route::get('/', function(){
     return 'PROVA';

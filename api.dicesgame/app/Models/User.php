@@ -24,6 +24,10 @@ class User extends Authenticatable
         'email',
         'password',
     ];
+    
+    /* protected $attributes = [
+        'name' => 'Anonymous',
+    ];*/
 
     /**
      * The attributes that should be hidden for serialization.
@@ -49,6 +53,12 @@ class User extends Authenticatable
     public function player(){
 
         return $this->hasOne(Player::class);
+
+    }
+
+    public function setName($name){
+
+        $this->name = $name;
 
     }
 }

@@ -3,8 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PlayerController;
-use App\Http\Controllers\Api\RegisterController;
-use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,17 +17,11 @@ use App\Http\Controllers\Api\LoginController;
 */
 
 
+Route::post('/register', [UserController::class, 'store'])->name('users.create');
+Route::post('/login', [UserController::class, 'login'])->name('users.login');
+Route::middleware('auth:api')->put('/users/{id}', [UserController::class, 'update'])->name('users.update');
 
-Route::post('/register', [RegisterController::class, 'store'])->name('users.create');
+Route::middleware('auth:api')->post('/players', [PlayerController::class, 'store'])->name('players.create');
+//This route passes to Users
+//Route::middleware('auth:api')->put('/players/{id}', [UserController::class, 'update'])->name('users.update');
 
-Route::post('/login', [LoginController::class, 'login'])->name('users.login');
-
-Route::post('/players', [PlayerController::class, 'store'])->name('players.create');
-
-/*Route::get('/', function(){
-    return 'PROVA';
-});*/
-
-/*Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});*/

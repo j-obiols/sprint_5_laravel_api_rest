@@ -39,7 +39,7 @@ class PlayerController extends Controller
         if(!$user->player){
 
             $player = Player::create([
-
+               
                 'numberOfGames'=>0,
                 'wonGames'=>0,
                 'percentWon'=>0,
@@ -49,6 +49,8 @@ class PlayerController extends Controller
             $player->save();
     
             $user->save();
+
+            return response([$player]);
         }
 
         $player = $user->player;

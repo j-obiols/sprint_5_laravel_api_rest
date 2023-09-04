@@ -37,10 +37,24 @@ class Game extends Model
      *
      * @var array<string, string>
      */
-    protected $casts = [
+    /*protected $casts = [
         'percentWonGames' => 'integer',
-    ];
+    ];*/
+     
 
+    public function gameResult() {
+        
+        $dice1 = $this -> dice1;
+        $dice2 = $this  -> dice2;
+      
+        if($dice1 + $dice2 == 7) {
+            $gameResult = 'Won';
+        } else {
+            $gameResult = 'Lost';
+        }
+        
+        return $gameResult;
+    }
 
     //One to Many Inverse Relationship
     public function player(){

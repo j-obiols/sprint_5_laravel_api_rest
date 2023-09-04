@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->enum('dice1', [1, 2, 3, 4, 5, 6]);
             $table->enum('dice2', [1, 2, 3, 4, 5, 6]);
-            $table->enum('gameResult', ['Won', 'Lose']);
+            $table->string('gameResult')-> nullable();
             $table->foreignId('player_id') ->constrained() -> onDelete('cascade') ->onUpdate('cascade');
             $table->timestamps();
         });

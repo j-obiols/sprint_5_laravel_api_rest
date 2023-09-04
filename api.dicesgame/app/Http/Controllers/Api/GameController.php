@@ -5,23 +5,62 @@ namespace App\Http\Controllers\Api;
 use App\Models\Game;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Player;
+use App\Models\User;
 
 class GameController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    
+    public function store()
     {
-        //
+        /** @var \App\Models\MyUserModel $user **/
+        $user = auth()->user();
+        $player = $user->player;
+
+        if($player) {
+ 
+            $game = Game::create([
+                'dice1'=>random_int(1,6),
+                'dice2'=>random_int(1,6),
+                'gameResult'=>'Win',
+                'player_id'=>$user->player->id
+            ]);
+
+            $game->save();
+
+            $player->numberOfGames +=1;
+            $game->gameResult = $game->gameResult();
+
+            $game->save();
+
+            $wonGames = $player->wonGames;
+           
+            if($game -> gameResult == 'Won') {
+                $wonGames += 1;
+            }
+
+            $numberOfGames = $player->numberOfGames;
+            $player->percentWon = (int)($wonGames/$numberOfGames *100);
+           
+            $player->save();
+        
+            return response([$game]);
+
+        } else {
+            return "You are not in player's list.
+            Please logout, then login again and follow the appropiate links.";
+        }
+        
+
+        
+ 
+        //return response([$game]);
     }
 
     /**

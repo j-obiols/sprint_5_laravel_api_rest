@@ -19,6 +19,8 @@ class GameFactory extends Factory
     
         $dice1 = random_int(1,6);
         $dice2 = random_int(1,6);
+
+        //$gameResult = $this -> gameResult($dice1, $dice2);
         
         if($dice1 + $dice2 == 7) {
 

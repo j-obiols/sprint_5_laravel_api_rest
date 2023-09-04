@@ -51,10 +51,12 @@ class UserManagementTest extends TestCase{
             'password'=>bcrypt($password='saturday')
         ]);
 
-       $response =  $this->post('v1/login', [
+        $response =  $this->post('v1/login', [
            'email' => 'alex@mail.mail',
            'password' =>$password
-       ]);
+        ]);
+
+        $this->assertAuthenticatedAs($user);
 
         $this->actingAs($user, 'api');
 

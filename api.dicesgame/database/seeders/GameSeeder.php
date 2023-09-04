@@ -2,15 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\Player;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Game;
 
-class PlayerSeeder extends Seeder
+class GameSeeder extends Seeder
 {
     public function run(): void
     {
-        Player::factory(10)->create();
-        
+        Game::factory(50)->create();
     }
 }

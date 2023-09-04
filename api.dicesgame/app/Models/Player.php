@@ -11,6 +11,7 @@ class Player extends Model
 {
     use HasFactory;
 
+
     /**
      * The attributes that are mass assignable.
      *
@@ -29,6 +30,7 @@ class Player extends Model
      *
      * @var array<int, string>
      */
+    //Temporarily not hidden for testing purpose
     /*protected $hidden = [
         'user_id',
     ];*/
@@ -38,13 +40,16 @@ class Player extends Model
         $this -> numberOfGAmes = $value;
     }
 
+
     public function setWonGames($value) {
         $this -> wonGames = $value;
     }
 
+
     public function setPercentWon($value) {
         $this -> percentWon = $value;
     }
+
 
     //One to One Inverse Relationship
     public function user(){
@@ -52,4 +57,5 @@ class Player extends Model
         return $this->belongsTo(User::class);
 
     }
+
 }

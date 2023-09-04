@@ -14,6 +14,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -25,9 +26,6 @@ class User extends Authenticatable
         'password',
     ];
     
-    /* protected $attributes = [
-        'name' => 'Anonymous',
-    ];*/
 
     /**
      * The attributes that should be hidden for serialization.
@@ -39,6 +37,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+
     /**
      * The attributes that should be cast.
      *
@@ -49,12 +48,14 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+
     //One To One Relationship
     public function player(){
 
         return $this->hasOne(Player::class);
 
     }
+
 
     public function setName($name){
 

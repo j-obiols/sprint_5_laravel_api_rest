@@ -50,7 +50,7 @@ class UserController extends Controller
             return response (['message'=>'Invalid login credentials.']);
         }
        
-         /** @var \App\Models\MyUserModel $user **/
+        /** @var \App\Models\MyUserModel $user **/
         $user = auth()->user();
 
         $accessToken = $user->createToken('authToken')->accessToken;

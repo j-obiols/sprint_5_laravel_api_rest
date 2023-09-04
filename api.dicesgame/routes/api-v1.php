@@ -24,4 +24,4 @@ Route::middleware('auth:api')->put('/users/{id}', [UserController::class, 'updat
 Route::middleware('auth:api')->post('/players', [PlayerController::class, 'store'])->name('players.create');
 //This route passes to Users
 //Route::middleware('auth:api')->put('/players/{id}', [UserController::class, 'update'])->name('users.update');
-
+Route::middleware('auth:api')->post('/players/{id}/games', [GameController::class, 'store'])->name('games.create');

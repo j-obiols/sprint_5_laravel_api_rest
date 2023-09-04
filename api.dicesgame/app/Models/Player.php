@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Models\User;
 
-class Player extends Model
-{
+class Player extends Model{
+
     use HasFactory;
 
 
@@ -30,7 +30,7 @@ class Player extends Model
      *
      * @var array<int, string>
      */
-    //Temporarily not hidden for testing purpose
+    //Temporarily not hidden for testing purpose?
     /*protected $hidden = [
         'user_id',
     ];*/
@@ -55,6 +55,14 @@ class Player extends Model
     public function user(){
 
         return $this->belongsTo(User::class);
+
+    }
+
+
+    //One to Many Relationship
+    public function games(){
+
+        return $this->hasMany(Game::class);
 
     }
 

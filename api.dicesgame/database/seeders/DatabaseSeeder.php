@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
             $player -> save();
 
         }
+
+        $this-> call(GameSeeder::class);
       
     }
 }

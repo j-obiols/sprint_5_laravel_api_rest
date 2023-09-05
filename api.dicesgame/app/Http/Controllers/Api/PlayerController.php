@@ -5,33 +5,29 @@ namespace App\Http\Controllers\Api;
 use App\Models\Player;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Resources\PlayerResource;
+use App\Http\Resources\PlayerList;
 
 use App\Models\User;
 
-class PlayerController extends Controller
-{
-    /*public function __construct(){
-        $this->middleware('auth:api');
-    }*/
+class PlayerController extends Controller {
+
     
+    public function index() {
     
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+       /** @var \App\Models\MyUserModel $user **/
+       $user = auth()->user();
+
+       $players = Player::with('user')->get();
+
+       return PlayerList::collection($players);
+
     }
 
     /**
-     * This method is related with the route for a 'New Game' 
-     * (or 'Start Playing <nameOfTheGame'>) Button. 
-     * It will create a Player only if the User has never played (this  
-     * game) before and it`s not found in the Players Table.
-     * In any case it will return the Player and his results to the
-     * landing view.
+     * See Readme file.
     **/
-    public function store(){
+    public function store() {
     
         /** @var \App\Models\MyUserModel $user **/
         $user = auth()->user();
@@ -39,7 +35,6 @@ class PlayerController extends Controller
         if(!$user->player){
 
             $player = Player::create([
-               
                 'numberOfGames'=>0,
                 'wonGames'=>0,
                 'percentWon'=>0,
@@ -50,37 +45,13 @@ class PlayerController extends Controller
     
             $user->save();
 
-            return response([$player]);
+            return PlayerResource::make($player);
         }
 
         $player = $user->player;
 
-        return response([$player]);
+        return PlayerResource::make($player);
 
     }
     
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Player $player)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Player $player)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Player $player)
-    {
-        //
-    }
 }

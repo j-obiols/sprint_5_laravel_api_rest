@@ -30,25 +30,74 @@ class Player extends Model{
      *
      * @var array<int, string>
      */
-    //Temporarily not hidden for testing purpose?
-    /*protected $hidden = [
+    protected $hidden = [
         'user_id',
-    ];*/
+    ];
+
+
+    public function addWonGame(){
+        $this -> wonGames +=1;
+    }
 
 
     public function setNumberOfGames($value) {
-        $this -> numberOfGAmes = $value;
+
+        $this -> numberOfGames = $value;
+      
     }
 
 
     public function setWonGames($value) {
+
         $this -> wonGames = $value;
+      
     }
 
 
     public function setPercentWon($value) {
-        $this -> percentWon = $value;
+
+        $this -> percentWon= $value;
+      
     }
+
+
+    public function calculatePercentWon() {
+
+        $wonGames = $this -> wonGames;
+        $numberOfGames = $this -> numberOfGames;
+        $this -> setPercentWon(round($wonGames/$numberOfGames *100));
+        $this -> save();
+
+    }
+
+
+    public function checkAndStore(Game $game) {
+      
+        if($game -> dice1 + $game  -> dice2 == 7) {
+            $game -> gameResult = 'Won';
+            $this -> addWonGame();
+        } else {
+            $game -> gameResult = 'Lost';
+        }
+        $game -> save();
+
+        $this -> numberOfGames +=1;
+        $this-> save();
+        $this -> calculatePercentWon();
+        $this-> save();
+
+    }
+
+
+    public function reset() {
+      
+        $this -> setNumberOfGames(0);
+        $this -> setWonGames(0);
+        $this -> setPercentWon(0);
+        $this-> save();
+    
+    }
+
 
 
     //One to One Inverse Relationship

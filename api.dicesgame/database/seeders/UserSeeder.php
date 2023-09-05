@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
             'email'=>'max@mail.mail',
             'password'=>bcrypt('45454545')
             //Asign role Admin
-       ]);
+        ]);
 
        User::factory(10)->create();
     }

@@ -24,6 +24,49 @@ class PlayerController extends Controller {
 
     }
 
+
+    public function ranking() {
+    
+        /** @var \App\Models\MyUserModel $user **/
+        $user = auth()->user();
+ 
+        $players = Player::all()->sortBy('percentWon')->reverse();
+
+        $players = Player::checkRanking($players);
+
+        return PlayerList::collection($players);
+ 
+    }
+
+
+    public function winner() {
+    
+        /** @var \App\Models\MyUserModel $user **/
+        $user = auth()->user();
+ 
+        $players = Player::all()->sortBy('percentWon')->reverse();
+
+        $winner = Player::checkRanking($players)->first();
+
+        return PlayerResource::make($winner);
+ 
+    }
+
+
+    public function loser() {
+    
+        /** @var \App\Models\MyUserModel $user **/
+        $user = auth()->user();
+ 
+        $players = Player::all()->sortBy('percentWon')->reverse();
+
+        $loser = Player::checkRanking($players)->last();
+
+        return PlayerResource::make($loser);
+ 
+    }
+ 
+
     /**
      * See Readme file.
     **/

@@ -29,6 +29,9 @@ Route::middleware('auth:api')->get('/players/{id}/games', [GameController::class
 Route::middleware('auth:api')->delete('/players/{id}/games', [GameController::class, 'destroy'])->name('game.delete');
 Route::middleware('auth:api')->get('/players', [PlayerController::class, 'index'])->name('player.index');
 
+Route::middleware('auth:api')->get('/players/ranking', [PlayerController::class, 'ranking'])->name('player.ranking');
+Route::middleware('auth:api')->get('/players/winner', [PlayerController::class, 'winner'])->name('player.winner');
+Route::middleware('auth:api')->get('/players/loser', [PlayerController::class, 'loser'])->name('player.winner');
 
 /*This route has passed to Users according to DataBase Model adopted:
 Route::middleware('auth:api')->put('/players/{id}', [UserController::class, 'update'])->name('users.update');*/

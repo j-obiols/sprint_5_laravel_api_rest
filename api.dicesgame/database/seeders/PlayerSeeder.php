@@ -10,7 +10,28 @@ class PlayerSeeder extends Seeder
 {
     public function run(): void
     {
-        Player::factory(10)->create();
+        Player::create([
+            'numberOfGames'=>20,
+            'wonGames'=>4,
+            'percentWon'=>20,
+            'user_id'=>2
+        ]);
+
+        Player::create([
+            'numberOfGames'=>10,
+            'wonGames'=>2,
+            'percentWon'=>20,
+            'user_id'=>3
+        ]);
+
+        Player::create([
+            'numberOfGames'=>100,
+            'wonGames'=>20,
+            'percentWon'=>20,
+            'user_id'=>4
+        ]);
+       
+        Player::factory(6)->create();
         
     }
 }

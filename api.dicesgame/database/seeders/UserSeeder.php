@@ -11,12 +11,31 @@ class UserSeeder extends Seeder
     public function run(): void {
     
         User::create([
-            'name'=>'Max Gol',
-            'email'=>'max@mail.mail',
-            'password'=>bcrypt('45454545')
+            'name'=>'Admin',
+            'email'=>'admin@mail.mail',
+            'password'=>bcrypt('password')
             //Asign role Admin
         ]);
 
-       User::factory(10)->create();
+        User::create([
+            'name'=>'Max 20% and 20 games',
+            'email'=>'max@mail.mail',
+            'password'=>bcrypt('password')
+        ]);
+
+        User::create([
+            'name'=>'Pere 20% and 10 games',
+            'email'=>'pere@mail.mail',
+            'password'=>bcrypt('password')
+        ]);
+
+        User::create([
+            'name'=>'Víctor 20% and 100 games',
+            'email'=>'victor@mail.mail',
+            'password'=>bcrypt('password')
+        ]);
+
+
+       User::factory(7)->create();
     }
 }

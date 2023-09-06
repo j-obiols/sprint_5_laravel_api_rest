@@ -99,6 +99,27 @@ class Player extends Model{
     }
 
 
+    public static function checkRanking($players) {
+      
+       for($i = 1; $i < count($players); $i++) {
+           
+            if(($players[$i-1] -> percentWon) == ($players[$i] -> percentWon)){
+
+                $m = $players[$i-1] -> numberOfGames;
+                $n = $players[$i] -> numberOfGames;
+
+                if($n < $m) {
+                    $temp = $players[$i-1];
+                    $players[$i-1] = $players[$i];
+                    $players[$i] = $temp;
+                }
+            }
+        }
+
+        return $players;
+    
+    }
+
 
     //One to One Inverse Relationship
     public function user(){

@@ -9,14 +9,32 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
 
-class UserController extends Controller
-{
+use App\Http\Resources\UserResource;
+use App\Http\Resources\UserLogoutResource;
+use App\Http\Resources\UserDeleteResource;
+Use App\Http\Resources\UserListResource;
+
+
+class UserController extends Controller{
+
+
+    public function index() {
+    
+        /** @var \App\Models\MyUserModel $user **/
+        $user = auth()->user();
+ 
+        $users = User::all();
+ 
+        return UserListResource::collection($users);
+ 
+    }
+
 
     // New user registration
     public function store(Request $request) {
 
         $validator = Validator::make($request->all(), [ 
-            'name'=>'nullable|string|max:255',
+            'name'=>'nullable|string|max:255|regex:/^([^0-9]*)$/',
             'email'=>'required|string|email|max:255|unique:users',
             'password'=>'required|string|min:8|confirmed'
         ]);
@@ -33,21 +51,26 @@ class UserController extends Controller
             'password' => $validated['password'],
         ]);
 
-        return response($user, 200);
+        return UserResource::make($user);
 
     }
 
 
-    // User's login
     public function login(Request $request) {
 
-        $login = $request -> validate([
-            'email'=> 'required|string|email',
-            'password'=>'required|string'
+        $validator = Validator::make($request->all(), [ 
+            'email'=>'required|string|email|max:255',
+            'password'=>'required|string|min:8'
         ]);
+        
+        if($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        } 
 
-        if(!Auth::attempt($login)) {
-            return response (['message'=>'Invalid login credentials.']);
+        $validated = $validator->validated();
+
+        if(!Auth::attempt($validated)) {
+            return response()->json (['message'=>'Invalid login credentials.'], 401);
         }
        
         /** @var \App\Models\MyUserModel $user **/
@@ -60,7 +83,26 @@ class UserController extends Controller
     }
 
 
-    // Update User's Name
+    public function logout(Request $request) {
+
+        /** @var \App\Models\MyUserModel $user **/
+        $user = Auth::User();
+        $user -> token()->revoke();
+
+        return UserLogoutResource::make($user);
+
+    }
+
+    
+    public function show() {
+    
+        /** @var \App\Models\MyUserModel $user **/
+        $user = auth()->user();
+
+        return UserResource::make($user);
+    }
+
+
     public function update(Request $request) {
  
         /** @var \App\Models\MyUserModel $user **/
@@ -86,7 +128,19 @@ class UserController extends Controller
 
         $user->save();
         
-        return response([$user]);
+        return UserResource::make($user);
+
+    }
+
+
+    public function destroy() {
+
+        /** @var \App\Models\MyUserModel $user **/
+        $user = Auth::User();
+
+        $user -> delete();
+        
+        return UserDeleteResource::make($user);
 
     }
 

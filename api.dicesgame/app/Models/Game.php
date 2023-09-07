@@ -42,17 +42,6 @@ class Game extends Model
     ];*/
      
 
-    /*public function checkGameResult(Player $player) {
-      
-        if($this -> dice1 + $this  -> dice2 == 7) {
-            $this -> gameResult = 'Won';
-            $player -> addWonGame();
-        } else {
-            $this -> gameResult = 'Lost';
-        }
-
-    }*/
-
 
     //One to Many Inverse Relationship
     public function player(){

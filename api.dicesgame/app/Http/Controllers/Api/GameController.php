@@ -26,10 +26,18 @@ class GameController extends Controller {
     }
 
     
+
     public function store() {
     
         /** @var \App\Models\MyUserModel $user **/
         $user = auth()->user();
+        
+        if(!$user) {
+
+            return response()->json(['message' => "Please log in before start playing."],  401);
+
+        }
+
         $player = $user->player;
 
         if($player) {
@@ -49,7 +57,7 @@ class GameController extends Controller {
 
         } else {
 
-            return response()->json(['message' => "You are not yet in player's list. Please logout, then login again and follow the appropiate links."],  401);
+            return response()->json(['message' => "You are not yet in player's list. Please logout, then login again and press Start Playing button."],  401);
               
         }
         

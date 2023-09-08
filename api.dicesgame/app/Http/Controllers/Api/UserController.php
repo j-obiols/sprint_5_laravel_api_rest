@@ -49,8 +49,8 @@ class UserController extends Controller{
             'name' => $validated['name']??'Anonymous',
             'email' => $validated['email'],
             'password' => $validated['password'],
-        ]);
-
+        ]) -> assignRole('user');
+        
         return UserResource::make($user);
 
     }
@@ -95,6 +95,15 @@ class UserController extends Controller{
 
     
     public function show() {
+    
+        /** @var \App\Models\MyUserModel $user **/
+        $user = auth()->user();
+
+        return UserResource::make($user);
+    }
+
+    
+    public function edit() {
     
         /** @var \App\Models\MyUserModel $user **/
         $user = auth()->user();

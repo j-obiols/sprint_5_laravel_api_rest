@@ -20,24 +20,29 @@ use App\Http\Controllers\Api\GameController;
 
 Route::post('users/register', [UserController::class, 'store'])->name('user.create');
 Route::post('users/login', [UserController::class, 'login'])->name('user.login');
-Route::middleware('auth:api')->post('users/logout', [UserController::class, 'logout'])->name('user.logout');
-Route::middleware('auth:api')->get('/users/{id}', [userController::class, 'show'])->name('user.show');
-Route::middleware('auth:api')->put('/users/{id}', [UserController::class, 'update'])->name('user.update');
-Route::middleware('auth:api')->delete('/users/{id}', [UserController::class, 'destroy'])->name('user.delete');
-Route::middleware('auth:api')->get('/users', [UserController::class, 'index'])->name('user.index');
+
+Route::middleware(['auth:api'])->group(function() {
+
+    Route::post('users/logout', [UserController::class, 'logout'])->name('users.logout');
+    Route::get('/users/{id}', [UserController::class, 'show'])->middleware(['can:users.show'])->name('users.show');
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->middleware(['can:users.edit'])->name('users.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->middleware(['can:users.update'])->name('users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->middleware(['can:users.delete'])->name('users.delete');
+    Route::get('/users', [UserController::class, 'index'])->middleware(['can:users.index'])->name('users.index');
+
+    Route::post('/players', [PlayerController::class, 'store'])->middleware(['can:players.store'])->name('players.store');
+
+    Route::post('/players/{id}/games', [GameController::class, 'store'])->middleware(['can:games.store'])->name('games.store');
+    Route::get('/players/{id}/games', [GameController::class, 'index'])->middleware(['can:games.index'])->name('games.index');
+    Route::delete('/players/{id}/games', [GameController::class, 'destroy'])->middleware(['can:games.delete'])->name('games.delete');
+
+    Route::get('/players', [PlayerController::class, 'index'])->middleware(['can:players.index'])->name('players.index');
+    Route::get('/players/ranking', [PlayerController::class, 'ranking'])->middleware(['can:players.ranking'])->name('players.ranking');
+    Route::get('/players/loser', [PlayerController::class, 'loser'])->middleware(['can:players.loser'])->name('players.loser');
+    Route::get('/players/winner', [PlayerController::class, 'winner'])->middleware(['can:players.winner'])->name('players.winner');
+
+});
 
 
-
-Route::middleware('auth:api')->post('/players', [PlayerController::class, 'store'])->name('player.create');
-Route::middleware('auth:api')->post('/players/{id}/games', [GameController::class, 'store'])->name('game.create');
-Route::middleware('auth:api')->get('/players/{id}/games', [GameController::class, 'index'])->name('game.index');
-Route::middleware('auth:api')->delete('/players/{id}/games', [GameController::class, 'destroy'])->name('game.delete');
-Route::middleware('auth:api')->get('/players', [PlayerController::class, 'index'])->name('player.index');
-Route::middleware('auth:api')->get('/players/ranking', [PlayerController::class, 'ranking'])->name('player.ranking');
-Route::middleware('auth:api')->get('/players/loser', [PlayerController::class, 'loser'])->name('player.winner');
-Route::middleware('auth:api')->get('/players/winner', [PlayerController::class, 'winner'])->name('player.winner');
-
-
-
-/*Note: this route has passed to Users according to API Model adopted:
+/*Note: this route has passed to Users Routes according to API Model adopted:
 Route::middleware('auth:api')->put('/players/{id}', [UserController::class, 'update'])->name('users.update');*/

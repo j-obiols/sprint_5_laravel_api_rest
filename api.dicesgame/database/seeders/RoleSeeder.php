@@ -16,15 +16,11 @@ class RoleSeeder extends Seeder
     
 
         $admin = Role::create(['name' => 'admin']);
-        $user = Role::create(['name' => 'user']);
+        $player = Role::create(['name' => 'player']);
+        
 
-        $show_user = Permission::create(['name' => 'users.show']);
-        $edit_user = Permission::create(['name' => 'users.edit']);
-        $update_user = Permission::create(['name' => 'users.update']);
-        $delete_user = Permission::create(['name' => 'users.delete']);
         $index_users = Permission::create(['name' => 'users.index']);
       
-        $create_player = Permission::create(['name' => 'players.store']);
         $index_players = Permission::create(['name' => 'players.index']);
         $ranking_players = Permission::create(['name' => 'players.ranking']);
         $winner_player = Permission::create(['name' => 'players.winner']);
@@ -37,8 +33,7 @@ class RoleSeeder extends Seeder
        
         
         $admin ->syncPermissions([$index_users, $index_players, $ranking_players, $winner_player, $loser_player]);
-        $user ->syncPermissions([$show_user, $edit_user, $update_user, $delete_user, $create_player, $create_game, $index_games, $delete_list_games, $ranking_players, $winner_player, $loser_player]);
-        
+        $player ->syncPermissions([$create_game, $index_games, $delete_list_games, $ranking_players, $winner_player, $loser_player]);
     }
 
 }

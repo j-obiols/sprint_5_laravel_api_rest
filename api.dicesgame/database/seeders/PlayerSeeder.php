@@ -14,24 +14,24 @@ class PlayerSeeder extends Seeder
             'numberOfGames'=>20,
             'wonGames'=>4,
             'percentWon'=>20,
-            'user_id'=>2
+            'user_id'=>3
         ]);
 
         Player::create([
             'numberOfGames'=>10,
             'wonGames'=>2,
             'percentWon'=>20,
-            'user_id'=>3
+            'user_id'=>4
         ]);
 
         Player::create([
             'numberOfGames'=>100,
             'wonGames'=>20,
             'percentWon'=>20,
-            'user_id'=>4
+            'user_id'=>5
         ]);
        
-        Player::factory(6)->create();
+        Player::factory(7)->create();
         
     }
 }

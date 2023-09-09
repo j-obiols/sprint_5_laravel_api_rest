@@ -24,19 +24,20 @@ Route::post('users/login', [UserController::class, 'login'])->name('user.login')
 Route::middleware(['auth:api'])->group(function() {
 
     Route::post('users/logout', [UserController::class, 'logout'])->name('users.logout');
-    Route::get('/users/{id}', [UserController::class, 'show'])->middleware(['can:users.show'])->name('users.show');
-    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->middleware(['can:users.edit'])->name('users.edit');
-    Route::put('/users/{id}', [UserController::class, 'update'])->middleware(['can:users.update'])->name('users.update');
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->middleware(['can:users.delete'])->name('users.delete');
+    Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.delete');
     Route::get('/users', [UserController::class, 'index'])->middleware(['can:users.index'])->name('users.index');
 
-    Route::post('/players', [PlayerController::class, 'store'])->middleware(['can:players.store'])->name('players.store');
 
+    Route::post('/players', [PlayerController::class, 'store'])->name('players.store');
+    Route::get('/players', [PlayerController::class, 'index'])->middleware(['can:players.index'])->name('players.index');
+   
     Route::post('/players/{id}/games', [GameController::class, 'store'])->middleware(['can:games.store'])->name('games.store');
     Route::get('/players/{id}/games', [GameController::class, 'index'])->middleware(['can:games.index'])->name('games.index');
     Route::delete('/players/{id}/games', [GameController::class, 'destroy'])->middleware(['can:games.delete'])->name('games.delete');
 
-    Route::get('/players', [PlayerController::class, 'index'])->middleware(['can:players.index'])->name('players.index');
     Route::get('/players/ranking', [PlayerController::class, 'ranking'])->middleware(['can:players.ranking'])->name('players.ranking');
     Route::get('/players/loser', [PlayerController::class, 'loser'])->middleware(['can:players.loser'])->name('players.loser');
     Route::get('/players/winner', [PlayerController::class, 'winner'])->middleware(['can:players.winner'])->name('players.winner');

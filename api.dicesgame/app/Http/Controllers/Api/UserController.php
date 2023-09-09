@@ -49,7 +49,7 @@ class UserController extends Controller{
             'name' => $validated['name']??'Anonymous',
             'email' => $validated['email'],
             'password' => $validated['password'],
-        ]) -> assignRole('user');
+        ]);
         
         return UserResource::make($user);
 

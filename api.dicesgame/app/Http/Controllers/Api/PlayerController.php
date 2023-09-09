@@ -6,7 +6,10 @@ use App\Models\Player;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\PlayerResource;
-use App\Http\Resources\PlayerList;
+use App\Http\Resources\PlayerListResource;
+use App\Http\Resources\PlayerRankingResource;
+
+
 
 use App\Models\User;
 
@@ -20,7 +23,40 @@ class PlayerController extends Controller {
 
        $players = Player::with('user')->get();
 
-       return PlayerList::collection($players);
+       return PlayerListResource::collection($players);
+
+    }
+    
+
+    /**
+     * See Readme file.
+    **/
+    public function store() {
+    
+        /** @var \App\Models\MyUserModel $user **/
+        $user = auth()->user();
+
+        if(!$user->player){
+
+            $player = Player::create([
+                'numberOfGames'=>0,
+                'wonGames'=>0,
+                'percentWon'=>0,
+                'user_id'=>$user->id
+            ]);
+
+            $player->user->assignRole('player');
+                
+            $player->save();
+    
+            $user->save();
+
+            return PlayerResource::make($player);
+        }
+
+        $player = $user->player;
+
+        return PlayerResource::make($player);
 
     }
 
@@ -34,7 +70,7 @@ class PlayerController extends Controller {
 
         $players = Player::checkRanking($players);
 
-        return PlayerList::collection($players);
+        return PlayerRankingResource::collection($players);
  
     }
 
@@ -67,34 +103,6 @@ class PlayerController extends Controller {
     }
  
 
-    /**
-     * See Readme file.
-    **/
-    public function store() {
     
-        /** @var \App\Models\MyUserModel $user **/
-        $user = auth()->user();
-
-        if(!$user->player){
-
-            $player = Player::create([
-                'numberOfGames'=>0,
-                'wonGames'=>0,
-                'percentWon'=>0,
-                'user_id'=>$user->id
-            ]);
-                
-            $player->save();
-    
-            $user->save();
-
-            return PlayerResource::make($player);
-        }
-
-        $player = $user->player;
-
-        return PlayerResource::make($player);
-
-    }
     
 }

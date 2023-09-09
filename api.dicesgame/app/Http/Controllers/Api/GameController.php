@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Player;
 use App\Models\User;
 use App\Http\Resources\GameResource;
+use Illuminate\Validation\UnauthorizedException;
 
 
 class GameController extends Controller {
@@ -24,19 +25,12 @@ class GameController extends Controller {
         return GameResource::collection($playerGames);
 
     }
-
     
-
+    
     public function store() {
     
         /** @var \App\Models\MyUserModel $user **/
         $user = auth()->user();
-        
-        if(!$user) {
-
-            return response()->json(['message' => "Please log in before start playing."],  401);
-
-        }
 
         $player = $user->player;
 
@@ -55,11 +49,7 @@ class GameController extends Controller {
         
             return GameResource::make($game);
 
-        } else {
-
-            return response()->json(['message' => "You are not yet in player's list. Please logout, then login again and press Start Playing button."],  401);
-              
-        }
+        } 
         
     }
 

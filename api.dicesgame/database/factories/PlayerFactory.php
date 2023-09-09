@@ -19,11 +19,12 @@ class PlayerFactory extends Factory
     {
         
         return [
+
             'numberOfGames' => fake() -> numberBetween(30,50), 
             'wonGames'=>fake() -> numberBetween(1,30),
             'percentWon'=>0,
-            'user_id'=>fake() -> unique() -> numberBetween(5, 10),
-            //'user_id'=>fake() -> unique() -> numberBetween(1, User::count())
+            'user_id'=>fake() -> unique() -> numberBetween(6, 12)
+
         ];
     }
 }

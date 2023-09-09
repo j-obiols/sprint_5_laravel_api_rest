@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\Player;
 
-class PlayerList extends JsonResource {
+class PlayerListResource extends JsonResource {
+
 
     function __construct(Player $model){
     
@@ -21,13 +22,14 @@ class PlayerList extends JsonResource {
      */
     public function toArray(Request $request): array
     {
+
         return [
             'user' => $this -> user -> name,
-            'id' => $this -> user -> id,
+            'user_id' => $this -> user_id,
             'numberOfGames' => $this -> numberOfGames,
             'won Games' => $this -> wonGames,
             'percentWon'=>$this->percentWon
         ];
+        
     }
-
 }

@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Http\Request;
+use Spatie\Permission\Exceptions\UnauthorizedException;
 
 
 class Handler extends ExceptionHandler {
@@ -29,10 +31,6 @@ class Handler extends ExceptionHandler {
         });*/
 
     }
-
-    
-
     
     
-
 }

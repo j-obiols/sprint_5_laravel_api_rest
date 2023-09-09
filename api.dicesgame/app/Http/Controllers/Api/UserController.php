@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\GeneralJsonException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +25,10 @@ class UserController extends Controller{
         $user = auth()->user();
  
         $users = User::all();
+
+        if(!$users){
+            throw new GeneralJsonException(message: 'Something went wrong. Please try again', code: 404);
+        }
  
         return UserListResource::collection($users);
  
@@ -51,6 +56,10 @@ class UserController extends Controller{
             'password' => $validated['password'],
         ]);
         
+        if(!$user){
+            throw new GeneralJsonException(message: 'Something went wrong. Please try again', code: 404);
+        }
+
         return UserResource::make($user);
 
     }
@@ -74,7 +83,7 @@ class UserController extends Controller{
         }
        
         /** @var \App\Models\MyUserModel $user **/
-        $user = auth()->user();
+        $user = Auth::User();
 
         $accessToken = $user->createToken('authToken')->accessToken;
 
@@ -87,6 +96,11 @@ class UserController extends Controller{
 
         /** @var \App\Models\MyUserModel $user **/
         $user = Auth::User();
+
+        if(!$user){
+            throw new GeneralJsonException(message: 'Unauthorized', code: 401);
+        }
+
         $user -> token()->revoke();
 
         return UserLogoutResource::make($user);
@@ -97,7 +111,11 @@ class UserController extends Controller{
     public function show() {
     
         /** @var \App\Models\MyUserModel $user **/
-        $user = auth()->user();
+        $user = Auth::User();
+        
+        if(!$user){
+            throw new GeneralJsonException(message: 'Unauthorized', code: 401);
+        }
 
         return UserResource::make($user);
     }
@@ -106,7 +124,11 @@ class UserController extends Controller{
     public function edit() {
     
         /** @var \App\Models\MyUserModel $user **/
-        $user = auth()->user();
+        $user = Auth::User();
+
+        if(!$user){
+            throw new GeneralJsonException(message: 'Unauthorized', code: 401);
+        }
 
         return UserResource::make($user);
     }
@@ -116,6 +138,10 @@ class UserController extends Controller{
  
         /** @var \App\Models\MyUserModel $user **/
         $user = Auth::User();
+
+        if(!$user){
+            throw new GeneralJsonException(message: 'Unauthorized', code: 401);
+        }
         
         $validator = Validator::make($request->all(), [ 
             'name'=>'nullable|string|max:255|regex:/^([^0-9]*)$/'
@@ -146,6 +172,10 @@ class UserController extends Controller{
 
         /** @var \App\Models\MyUserModel $user **/
         $user = Auth::User();
+
+        if(!$user){
+            throw new GeneralJsonException(message: 'Unauthorized', code: 401);
+        }
 
         $user -> delete();
         

@@ -25,21 +25,21 @@ class UserSeeder extends Seeder
 
 
         User::create([
-            'name'=>'Max 20% and 20 games',
+            'name'=>'Max 50% and 2 games',
             'email'=>'max@mail.mail',
             'password'=>bcrypt('password')
         ]) -> assignRole('player');
 
 
         User::create([
-            'name'=>'Pere 20% and 10 games',
+            'name'=>'Pere 50% and 4 games',
             'email'=>'pere@mail.mail',
             'password'=>bcrypt('password')
         ]) -> assignRole('player');
 
 
         User::create([
-            'name'=>'Víctor 20% and 100 games',
+            'name'=>'Víctor 50% and 6 games',
             'email'=>'victor@mail.mail',
             'password'=>bcrypt('password')
         ]) -> assignRole('player');

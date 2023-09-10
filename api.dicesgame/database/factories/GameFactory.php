@@ -35,7 +35,7 @@ class GameFactory extends Factory
             'dice1' =>  $dice1,
             'dice2' =>  $dice2,
             'gameResult' => $gameResult,
-            'player_id' =>Player::all()->random()->id
+            'player_id' => Player::all()->except([1, 2, 3])->random()->id
         ];
     }
     

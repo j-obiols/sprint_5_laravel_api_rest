@@ -8,8 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Player;
 use App\Models\User;
 use App\Http\Resources\GameResource;
-use Illuminate\Validation\UnauthorizedException;
-
+USE App\Exceptions\GeneralJsonException;
 
 class GameController extends Controller {
 
@@ -54,23 +53,45 @@ class GameController extends Controller {
     }
 
 
-    public function destroy(Game $game) {
+    public function destroy($id) {
    
         /** @var \App\Models\MyUserModel $user **/
-        $user = auth()->user();
-        $player = $user->player;
+        $admin = auth()->user();
 
-        $playerGames = Game::all()->where('player_id', $player->id);
+        $user = User::findOrFail($id);
+
+        $player = $user->player;
         
-        foreach($playerGames as $playerGame){
-            $playerGame -> delete();
+
+        if($player){
+
+            $player_id = $user->player->id;
+
+            $playerGames = Game::where('player_id', $player_id)->get();
+
+            if($playerGames->count() == 0) {
+                throw new GeneralJsonException(message: 'This player has no games to delete', code: 404);
+            }
+
+            foreach($playerGames as $playerGame){
+
+                $playerGame -> delete();
+
+            }
+            
+            $player -> reset();
+                
+            $playerGames = Game::where('player_id', $player_id)->get();
+
+            return GameResource::collection($playerGames);
+            
+
+        } else {
+
+            throw new GeneralJsonException(message: 'This user is still not a <this game> player', code: 404);
+
         }
         
-        $player -> reset();
-        
-        $playerGames = Game::all()->where('player_id', $player->id);
-
-        return GameResource::collection($playerGames);
     }
 
 }

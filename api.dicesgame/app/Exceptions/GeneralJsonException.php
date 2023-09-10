@@ -21,5 +21,6 @@ class GeneralJsonException extends Exception
                 'message' => $this -> getMessage(),
             ]
         ], $this->code);
+        
     }
 }

@@ -31,7 +31,6 @@ class RoleSeeder extends Seeder
         $delete_list_games = Permission::create(['name' => 'games.delete']);
         
        
-        
         $admin ->syncPermissions([$index_users, $index_players, $ranking_players, $winner_player, $loser_player]);
         $player ->syncPermissions([$create_game, $index_games, $delete_list_games, $ranking_players, $winner_player, $loser_player]);
     }

@@ -20,11 +20,20 @@ class PlayerFactory extends Factory
         
         return [
 
+            'numberOfGames' => 0, 
+            'wonGames'=>0,
+            'percentWon'=>0,
+            'user_id'=>fake() -> unique() -> numberBetween(6, 12)
+
+        ];
+
+        /*return [
+
             'numberOfGames' => fake() -> numberBetween(30,50), 
             'wonGames'=>fake() -> numberBetween(1,30),
             'percentWon'=>0,
             'user_id'=>fake() -> unique() -> numberBetween(6, 12)
 
-        ];
+        ];*/
     }
 }

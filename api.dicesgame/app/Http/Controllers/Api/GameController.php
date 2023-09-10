@@ -17,6 +17,7 @@ class GameController extends Controller {
     
         /** @var \App\Models\MyUserModel $user **/
         $user = auth()->user();
+        
         $player = $user->player;
 
         $playerGames = Game::all()->where('player_id', $player->id);
@@ -58,14 +59,11 @@ class GameController extends Controller {
         /** @var \App\Models\MyUserModel $user **/
         $admin = auth()->user();
 
-        $user = User::findOrFail($id);
-
-        $player = $user->player;
-        
+        $player = Player::find($id);
 
         if($player){
 
-            $player_id = $user->player->id;
+            $player_id = $player->id;
 
             $playerGames = Game::where('player_id', $player_id)->get();
 
@@ -88,7 +86,7 @@ class GameController extends Controller {
 
         } else {
 
-            throw new GeneralJsonException(message: 'This user is still not a <this game> player', code: 404);
+            throw new GeneralJsonException(message: 'Player not found', code: 404);
 
         }
         

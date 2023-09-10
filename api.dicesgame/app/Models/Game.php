@@ -10,6 +10,9 @@ class Game extends Model
     use HasFactory;
 
 
+    public static $averagePercentWon;
+
+
     /**
      * The attributes that are mass assignable.
      *
@@ -44,10 +47,20 @@ class Game extends Model
 
 
     //One to Many Inverse Relationship
-    public function player(){
+    public function player() {
 
         return $this->belongsTo(Player::class);
 
+    }
+
+   
+    public static function averagePercentWon(): int {
+
+        $totalGames = Game::all()->count();
+        $totalWon = Game::all()->where('gameResult', 'Won')->count();
+        Self::$averagePercentWon = round(($totalWon/$totalGames*100), 0);
+
+        return Self::$averagePercentWon;
     }
 
     

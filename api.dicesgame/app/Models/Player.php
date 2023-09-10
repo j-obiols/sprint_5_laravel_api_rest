@@ -111,9 +111,23 @@ class Player extends Model{
                 $n = $players[$i] -> numberOfGames;
 
                 if($n < $m) {
+
                     $temp = $players[$i-1];
                     $players[$i-1] = $players[$i];
                     $players[$i] = $temp;
+
+                }elseif($n == $m){
+
+                    $tieBreak = random_int(1,2);
+
+                    if($tieBreak == 1) {
+
+                        $temp = $players[$i-1];
+                        $players[$i-1] = $players[$i];
+                        $players[$i] = $temp;
+
+                    }
+
                 }
             }
         }

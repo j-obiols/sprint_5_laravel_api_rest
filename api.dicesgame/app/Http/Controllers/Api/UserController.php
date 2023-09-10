@@ -55,6 +55,8 @@ class UserController extends Controller{
             'email' => $validated['email'],
             'password' => $validated['password'],
         ]);
+
+        $user->save();
         
         if(!$user){
             throw new GeneralJsonException(message: 'Something went wrong. Please try again', code: 404);

@@ -28,22 +28,26 @@ class DatabaseSeeder extends Seeder
         
         foreach($players as $player) {
             
-            $playerGames = Game::where('player_id', $player->id) ->get();
-            $numberOfGames = $playerGames->count();
+            $numberOfGames = Game::where('player_id', $player->id) -> count();
             $player->setNumberOfGames($numberOfGames);
 
-            $wonPlayerGames = Game::where('player_id', $player->id)
-                 ->where('gameResult', 'Won')
-                 ->get();
-            $wonGames = $wonPlayerGames->count();
+            $wonGames = Game::where('player_id', $player->id) -> where('gameResult', 'Won') -> count();
             $player->setWonGames($wonGames);
 
             $numberOfGames = $player -> numberOfGames;
             $wonGames = $player -> wonGames;
 
-            $percentWon = round(($wonGames/$numberOfGames*100), 0);
+            if ($numberOfGames != 0) {
+
+                $percentWon = round(($wonGames/$numberOfGames*100), 0);
+            
+            } else {
+
+                $percentWon = 0;
+            }
 
             $player -> setPercentWon($percentWon);
+
             $player -> save();
 
         }

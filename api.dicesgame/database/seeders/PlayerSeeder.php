@@ -11,23 +11,23 @@ class PlayerSeeder extends Seeder
     public function run(): void
     {
         Player::create([
-            'numberOfGames'=>20,
-            'wonGames'=>4,
-            'percentWon'=>20,
+            'numberOfGames'=>2,
+            'wonGames'=>1,
+            'percentWon'=>50,
             'user_id'=>3
         ]);
 
         Player::create([
-            'numberOfGames'=>10,
+            'numberOfGames'=>4,
             'wonGames'=>2,
-            'percentWon'=>20,
+            'percentWon'=>50,
             'user_id'=>4
         ]);
 
         Player::create([
-            'numberOfGames'=>100,
-            'wonGames'=>20,
-            'percentWon'=>20,
+            'numberOfGames'=>6,
+            'wonGames'=>3,
+            'percentWon'=>50,
             'user_id'=>5
         ]);
        

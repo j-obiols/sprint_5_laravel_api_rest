@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use App\Http\Resources\PlayerResource;
 use App\Http\Resources\PlayerListResource;
 use App\Http\Resources\PlayerRankingResource;
+use App\Http\Resources\PlayerWinLosResource;
 
-
-
+use App\Models\Game;
 use App\Models\User;
 
 class PlayerController extends Controller {
@@ -28,9 +28,6 @@ class PlayerController extends Controller {
     }
     
 
-    /**
-     * See Readme file.
-    **/
     public function store() {
     
         /** @var \App\Models\MyUserModel $user **/
@@ -84,7 +81,9 @@ class PlayerController extends Controller {
 
         $winner = Player::checkRanking($players)->first();
 
-        return PlayerResource::make($winner);
+        Game::$averagePercentWon = Game::averagePercentWon();
+
+        return PlayerWinLosResource::make($winner);
  
     }
 
@@ -97,12 +96,12 @@ class PlayerController extends Controller {
         $players = Player::all()->sortBy('percentWon')->reverse();
 
         $loser = Player::checkRanking($players)->last();
+        
+        Game::$averagePercentWon = Game::averagePercentWon();
 
-        return PlayerResource::make($loser);
- 
+        return PlayerWinLosResource::make($loser);
+
     }
  
-
-    
     
 }

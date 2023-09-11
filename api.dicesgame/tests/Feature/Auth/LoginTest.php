@@ -13,7 +13,7 @@ class LoginTest extends TestCase
 
     use RefreshDatabase;
 
-
+    //ok
     /** @test */
     public function user_can_login_with_correct_credentials() {
 
@@ -21,124 +21,152 @@ class LoginTest extends TestCase
         $user = User::create([
             'name'=>'Authenticated',
             'email'=>'auth@mail.mail',
-            'password'=>bcrypt($password='laravel')
-       ]);
+            'password'=>bcrypt($password='password')
+        ]);
 
-       $response =  $this->post('v1/login', [
-           'email' => $user ->email,
+        $response =  $this->post('v1/users/login', [
+           'email' => 'auth@mail.mail',
            'password' => $password
-       ]);
+        ]);
 
        $this->assertAuthenticatedAs($user);
 
     }
 
-
+    //ok
     /** @test */
     public function user_cannot_login_with_invalid_mail() {
         
         $user = User::create([
             'name'=>'Alex',
             'email'=>'alex@mail.mail',
-            'password'=>bcrypt($password='saturday')
+            'password'=>bcrypt($password='password')
         ]);
 
-       $response =  $this->post('v1/login', [
+       $response =  $this->post('v1/users/login', [
            'email' => 'maria@mail.mail',
            'password' => $password
        ]);
 
+       $response->assertStatus(401);
+
+       $response->assertJson([
+        'message' => 'Invalid login credentials.',
+       ]);
 
        $this->assertGuest();
     
     }
 
-
+    //ok
     /** @test */
     public function user_cannot_login_with_invalid_password() {
         
         $user = User::create([
             'name'=>'Alex',
             'email'=>'alex@mail.mail',
-            'password'=>bcrypt($password='saturday')
+            'password'=>bcrypt($password='password')
         ]);
 
-        $response =  $this->post('v1/login', [
-           'email' => $user ->email,
+        $response =  $this->post('v1/users/login', [
+           'email' => 'alex@mail.mail',
            'password' =>'invalid-password'
         ]);
 
-       $this->assertGuest();
+        $response->assertStatus(401);
+
+        $response->assertJson([
+         'message' => 'Invalid login credentials.',
+        ]);
+ 
+        $this->assertGuest();
 
     }
 
-
+    //ok
     /** @test */
     public function user_cannot_login_if_email_is_null() {
         
         $user = User::create([
             'name'=>'Alex',
             'email'=>'alex@mail.mail',
-            'password'=>bcrypt($password='saturday')
+            'password'=>bcrypt($password='password')
         ]);
 
-       $response =  $this->post('v1/login', [
+       $response =  $this->post('v1/users/login', [
            'email' => '',
            'password' =>$password
        ]);
        
 
-        $response->assertSessionHasErrors([
-          'email'=>'The email field is required.'
+        $response->assertStatus(422);
+
+        $response->assertJson([
+           'email' => [
+             0 =>  'The email field is required.'
+           ]
         ]);
-    
+
+        $this->assertGuest();
     }
 
-
+    //ok
     /** @test */
     public function user_cannot_login_if_email_is_not_an_email() {
         
         $user = User::create([
             'name'=>'Alex',
             'email'=>'alex@mail.mail',
-            'password'=>bcrypt($password='saturday')
+            'password'=>bcrypt($password='password')
         ]);
 
-       $response =  $this->post('v1/login', [
+       $response = $this->withHeaders(['Accept'=> 'application/json'])->post('v1/users/login', [
            'email' => 'cities',
            'password' =>$password
        ]);
        
-        $response->assertSessionHasErrors([
-          'email'=>'The email field must be a valid email address.'
-       ]);
-    
+       $response->assertStatus(422);
+
+        $response->assertJson([
+          'email' => [
+            0 =>  'The email field must be a valid email address.'
+          ]
+        ]);
+      
+       $this->assertGuest();
     }
 
-
+    //ok
     /** @test */
     public function user_cannot_login_if_email_is_not_string() {
         
         $user = User::create([
             'name'=>'Alex',
             'email'=>'alex@mail.mail',
-            'password'=>bcrypt($password='saturday')
+            'password'=>bcrypt($password='password')
         ]);
 
-       $response =  $this->post('v1/login', [
+       $response =  $this->post('v1/users/login', [
            'email' => 12345,
            'password' =>$password
        ]);
        
-        $response->assertSessionHasErrors([
-          'email'=>'The email field must be a string.'
-        ]);
+       $response->assertStatus(422);
+
+       $response->assertJson([
+         'email' => [
+           0 => 'The email field must be a string.',
+           1 =>  'The email field must be a valid email address.'
+         ]
+       ]);
+     
+      $this->assertGuest();
     
     }
 
-
+    //ok
     /** @test */
-    public function user_cannot_login_if_password_is_empty() {
+    public function user_cannot_login_if_password_field_is_empty() {
         
         $user = User::create([
             'name'=>'Alex',
@@ -146,19 +174,24 @@ class LoginTest extends TestCase
             'password'=>bcrypt($password='saturday')
         ]);
 
-       $response =  $this->post('v1/login', [
-           'email' => $user ->email,
+       $response =  $this->post('v1/users/login', [
+           'email' => 'alex@mail.mail',
            'password' =>''
        ]);
 
 
-       $response->assertSessionHasErrors([
-         'password'=>'The password field is required.'
-       ]);
+        $response->assertStatus(422);
+
+        $response->assertJson([
+            'password' => [
+              0 =>  'The password field is required.'
+            ]
+        ]);
     
+        $this->assertGuest();
     }
 
-
+    //ok
     /** @test */
     public function user_cannot_login_if_password_is_not_string() {
         
@@ -168,15 +201,20 @@ class LoginTest extends TestCase
             'password'=>bcrypt($password='saturday')
         ]);
 
-       $response =  $this->post('v1/login', [
-           'email' => $user ->email,
+       $response =  $this->post('v1/users/login', [
+           'email' => 'alex@mail.mail',
            'password' =>12345
        ]);
 
+       $response->assertStatus(422);
 
-       $response->assertSessionHasErrors([
-         'password'=>'The password field must be a string.'
-       ]);
+        $response->assertJson([
+            'password' => [
+              0 =>  'The password field must be a string.'
+            ]
+        ]);
+    
+        $this->assertGuest();
     
     }
 

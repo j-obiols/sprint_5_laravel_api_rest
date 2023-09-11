@@ -5,118 +5,68 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Database\Factories\UserFactory;
-use App\Http\Controllers\Api\RegisterController;
-use Database\Seeders\RoleSeeder;
-
 use App\Models\User;
 use App\Models\Player;
 use App\Models\Game;
 
-class PlayerManagementTest extends TestCase
-{
+use Database\Seeders\RoleSeeder;
+
+class AdminActionsTest extends TestCase {
+
 
     use RefreshDatabase; 
 
-    //ok
+
     /** @test */
-    public function a_registered_user_can_become_a_player() {
+    public function admin_can_retrieve_users_list(){
 
         $this -> seed(RoleSeeder::class);
-        
+
         $user = User::create([
-            'name'=>'Alex',
-            'email'=>'alex@mail.mail',
+            'name'=>'admin',
+            'email'=>'admin@mail.mail',
             'password'=>bcrypt($password='password')
         ]);
 
+        $user->assignRole('admin');
+
         $response =  $this->post('v1/users/login', [
-            'email' => 'alex@mail.mail',
+            'email' => 'admin@mail.mail',
             'password' =>$password
         ]);
- 
-        $this->assertAuthenticatedAs($user);
 
         $this->actingAs($user, 'api');
 
-        $response = $this->withHeaders(['Accept'=> 'application/json'])->post('v1/players');
-
-        $response->assertJson([
-            'data' => ['name' => 'Alex',
-            'numberOfGames' => 0,
-            'wonGames' => 0,
-            'percentWon'=> 0,]
-        ]);
-
-        $this->assertCount(1, Player::all());
-    }
-
-    
-
-    /** @test */
-    public function existing_player_in_database_is_retrieved() {
-
-        $this -> seed(RoleSeeder::class);
+        $response = $this->withHeaders(['Accept'=> 'application/json'])->get('v1/users');
         
-        $user = User::create([
-            'name'=>'Alex',
-            'email'=>'alex@mail.mail',
-            'password'=>bcrypt($password='password')
-        ]);
+        $response->assertStatus(200);
+        
+        $this->assertCount(1, User::all());
 
-        $player = Player::create([
-            'numberOfGames' => 5,
-            'wonGames' => 1,
-            'percentWon'=> 20,
-            'user_id'=>$user->id
-        ]);
-
-        $player->user->assignRole('player');
-
-        $response =  $this->post('v1/users/login', [
-            'email' => 'alex@mail.mail',
-            'password' =>$password
-        ]);
- 
-        $this->assertAuthenticatedAs($user);
-
-        $this->actingAs($user, 'api');
-
-        $response = $this->withHeaders(['Accept'=> 'application/json'])->post('v1/players');
-
-        $response->assertJson([
-            'data' => ['name' => 'Alex',
-            'numberOfGames' => 5,
-            'wonGames' => 1,
-            'percentWon'=> 20,]
-        ]);
-
-        $this->assertCount(1, Player::all());
     }
 
 
     /** @test */
-    public function a_player_cannot_retrieve_a_list_of_players() {
+    public function admin_can_retrieve_players_list() {
 
         $this -> seed(RoleSeeder::class);
         
         $user = User::create([
+            'name'=>'admin',
+            'email'=>'admin@mail.mail',
+            'password'=>bcrypt($password='password')
+        ]);
+
+        $user1 = User::create([
             'name'=>'Alex',
             'email'=>'alex@mail.mail',
             'password'=>bcrypt($password='password')
         ]);
 
-        $player = Player::create([
-            'numberOfGames' => 5,
-            'wonGames' => 1,
-            'percentWon'=> 20,
-            'user_id'=>$user->id
-        ]);
-
-        $player->user->assignRole('player');
+        $user->assignRole('admin');
 
         $response =  $this->post('v1/users/login', [
-            'email' => 'alex@mail.mail',
+            'email' => 'admin@mail.mail',
             'password' =>$password
         ]);
 
@@ -126,24 +76,84 @@ class PlayerManagementTest extends TestCase
 
         $response = $this->withHeaders(['Accept'=> 'application/json'])->get('v1/players');
 
-        $response->assertJson([
-            'message' => 'This action is unauthorized.'
-        ]);
-        
-        $response->assertStatus(403);
-        
-        
-        $this->assertCount(1, User::all());
-        $this->assertCount(1, Player::all());
+        $response->status(200);
+        $this->assertCount(2, User::all());
 
     }
 
 
     /** @test */
-    public function a_player_can_retrieve_the_ranking() {
+    public function admin_can_delete_a_player_games_list() {
 
         $this -> seed(RoleSeeder::class);
         
+        $user1 = User::create([
+            'name'=>'admin',
+            'email'=>'admin@mail.mail',
+            'password'=>bcrypt($password='password')
+        ]);
+
+        $user1->assignRole('admin');
+        
+        $user2 = User::create([
+            'name'=>'Víctor',
+            'email'=>'victor@mail.mail',
+            'password'=>bcrypt($password='password')
+        ]);
+
+        $player1 = Player::create([
+            'name'=>'Víctor',
+            'numberOfGames' => 0,
+            'wonGames' => 0,
+            'percentWon'=> 0,
+            'user_id'=>$user2->id
+        ]);
+
+        $game1 = Game::create([
+            'dice1' => 6,
+            'dice2' => 1,
+            'gameResult' => 'Won',
+            'player_id' => $player1 ->id
+        ]);
+
+        $this->assertCount(1, Game::all());
+
+
+        $response =  $this->post('v1/users/login', [
+            'email' => 'admin@mail.mail',
+            'password' =>$password
+        ]);
+
+        $this->assertAuthenticatedAs($user1);
+
+        $this->actingAs($user1, 'api');
+
+        $response = $this->withHeaders(['Accept'=> 'application/json'])->delete('v1/players/1/games');
+
+        $response->status(200);
+
+        $this->assertCount(2, User::all());
+
+        $this->assertCount(1, Player::all());
+
+        $this->assertCount(0, Game::all());
+
+    }
+
+
+    /** @test */
+    public function admin_can_retrieve_the_ranking() {
+
+        $this -> seed(RoleSeeder::class);
+        
+        $user = User::create([
+            'name'=>'Admin',
+            'email'=>'admin@mail.mail',
+            'password'=>bcrypt($password='password')
+        ]);
+        
+        $user->assignRole('admin');
+
         $user1 = User::create([
             'name'=>'Alex',
             'email'=>'alex@mail.mail',
@@ -166,7 +176,6 @@ class PlayerManagementTest extends TestCase
         ]);
 
         $player2 = Player::create([
-            'name'=>'Maria',
             'numberOfGames' => 100,
             'wonGames' => 20,
             'percentWon'=> 20,
@@ -176,28 +185,36 @@ class PlayerManagementTest extends TestCase
         $player2->user->assignRole('player');
 
         $response =  $this->post('v1/users/login', [
-            'email' => 'alex@mail.mail',
+            'email' => 'admin@mail.mail',
             'password' =>$password
         ]);
 
-        $this->assertAuthenticatedAs($user1);
+        $this->assertAuthenticatedAs($user);
 
-        $this->actingAs($user1, 'api');
+        $this->actingAs($user, 'api');
 
         $response = $this->withHeaders(['Accept'=> 'application/json'])->get('v1/players/ranking');
 
         $response->assertStatus(200);
         
-        $this->assertCount(2, User::all());
+        $this->assertCount(3, User::all());
         $this->assertCount(2, Player::all());
 
     }
 
 
     /** @test */
-    public function a_player_can_retrieve_the_winner() {
+    public function admin_can_retrieve_the_winner() {
 
         $this -> seed(RoleSeeder::class);
+
+        $user = User::create([
+            'name'=>'Admin',
+            'email'=>'admin@mail.mail',
+            'password'=>bcrypt($password='password')
+        ]);
+        
+        $user->assignRole('admin');
         
         $user1 = User::create([
             'name'=>'Alex',
@@ -272,13 +289,13 @@ class PlayerManagementTest extends TestCase
         ]);
 
         $response =  $this->post('v1/users/login', [
-            'email' => 'alex@mail.mail',
+            'email' => 'admin@mail.mail',
             'password' =>$password
         ]);
 
-        $this->assertAuthenticatedAs($user1);
+        $this->assertAuthenticatedAs($user);
 
-        $this->actingAs($user1, 'api');
+        $this->actingAs($user, 'api');
 
         $response = $this->withHeaders(['Accept'=> 'application/json'])->get('v1/players/winner');
 
@@ -291,18 +308,25 @@ class PlayerManagementTest extends TestCase
             'percentWon'=> 50,
             'averagePercentWon'=> 50]
         ]);
-       
-
-        $this->assertCount(2, User::all());
+    
+        $this->assertCount(3, User::all());
         $this->assertCount(2, Player::all());
         $this->assertCount(6, Game::all());
     }
 
 
     /** @test */
-    public function a_player_can_retrieve_the_loser() {
+    public function admin_can_retrieve_the_loser() {
 
         $this -> seed(RoleSeeder::class);
+
+        $user = User::create([
+            'name'=>'Admin',
+            'email'=>'admin@mail.mail',
+            'password'=>bcrypt($password='password')
+        ]);
+        
+        $user->assignRole('admin');
         
         $user1 = User::create([
             'name'=>'Alex',
@@ -377,13 +401,13 @@ class PlayerManagementTest extends TestCase
         ]);
 
         $response =  $this->post('v1/users/login', [
-            'email' => 'alex@mail.mail',
+            'email' => 'admin@mail.mail',
             'password' =>$password
         ]);
 
-        $this->assertAuthenticatedAs($user1);
+        $this->assertAuthenticatedAs($user);
 
-        $this->actingAs($user1, 'api');
+        $this->actingAs($user, 'api');
 
         $response = $this->withHeaders(['Accept'=> 'application/json'])->get('v1/players/loser');
 
@@ -398,10 +422,9 @@ class PlayerManagementTest extends TestCase
         ]);
        
 
-        $this->assertCount(2, User::all());
+        $this->assertCount(3, User::all());
         $this->assertCount(2, Player::all());
         $this->assertCount(6, Game::all());
     }
-
 
 }

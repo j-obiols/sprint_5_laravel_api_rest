@@ -16,9 +16,9 @@ class PlayerWinLosResource extends JsonResource
     public function toArray(Request $request): array {
 
         return [
-            'user' => $this -> user -> name,
+            'name' => $this -> user -> name,
             'numberOfGames' => $this -> numberOfGames,
-            'won Games' => $this -> wonGames,
+            'wonGames' => $this -> wonGames,
             'percentWon'=>$this->percentWon,
             'averagePercentWon' => Game::$averagePercentWon
         ];

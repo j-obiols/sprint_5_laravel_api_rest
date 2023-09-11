@@ -40,7 +40,7 @@ class GameController extends Controller {
                 'dice1'=>random_int(1,6),
                 'dice2'=>random_int(1,6),
                 'gameResult'=>'',
-                'player_id'=>$user->player->id
+                'player_id'=>$player->id
             ]);
             
             $game->save();

@@ -15,35 +15,67 @@ class UserManagementTest extends TestCase{
 
 
     use RefreshDatabase; 
-    
+
 
     /** @test */
-    public function a_user_can_be_registered()
-    {
-        
-        $this -> withoutExceptionHandling();
+    public function a_user_can_retrieve_his_data(){
 
-        $response = $this->post('v1/register', [
-            'name' => 'Max Gol',
-            'email' => 'max@mail.mail',
-            'password'=>'12341234',
-            'password_confirmation'=>'12341234',
+        $user = User::create([
+            'name'=>'Alex',
+            'email'=>'alex@mail.mail',
+            'password'=>bcrypt($password='password')
         ]);
+
+        $response =  $this->post('v1/users/login', [
+            'email' => 'alex@mail.mail',
+            'password' =>$password
+        ]);
+ 
+        $this->assertAuthenticatedAs($user);
+
+        $this->actingAs($user, 'api');
+
+        $response =  $this->get('v1/users/' .$user->id);
 
         $response->assertStatus(200);
 
         $this->assertCount(1, User::all());
 
-        $user = User::first();
-
-        $this -> assertEquals($user->name, 'Max Gol');
-        $this -> assertEquals($user->email, 'max@mail.mail');
-    
     }
 
 
     /** @test */
-    public function a_user_can_be_updated(){
+    public function a_user_can_edit_his_data(){
+
+        $user = User::create([
+            'name'=>'Alex',
+            'email'=>'alex@mail.mail',
+            'password'=>bcrypt($password='password')
+        ]);
+
+        $response =  $this->post('v1/users/login', [
+            'email' => 'alex@mail.mail',
+            'password' =>$password
+        ]);
+ 
+        $this->assertAuthenticatedAs($user);
+
+        $this->actingAs($user, 'api');
+
+        $response =  $this->get('v1/users/' .$user->id, [
+            'name'=>'Alex',
+            'email' => 'alex@mail.mail', 
+        ]);
+
+        $response->assertOk();
+
+        $this->assertCount(1, User::all());
+
+    }
+
+
+   /** @test */
+   public function a_user_can_update_his_name(){
 
         $user = User::create([
             'name'=>'Alex',
@@ -51,9 +83,9 @@ class UserManagementTest extends TestCase{
             'password'=>bcrypt($password='saturday')
         ]);
 
-        $response =  $this->post('v1/login', [
-           'email' => 'alex@mail.mail',
-           'password' =>$password
+        $response =  $this->post('v1/users/login', [
+        'email' => 'alex@mail.mail',
+        'password' =>$password
         ]);
 
         $this->assertAuthenticatedAs($user);
@@ -74,278 +106,144 @@ class UserManagementTest extends TestCase{
 
     }
 
-
     /** @test */
-    public function a_user_can_be_registered_if_name_is_null(){
-
-        $this -> withoutExceptionHandling();
-
-        $response = $this->post('v1/register', [
-            'name' => '',
-            'email' => 'max@mail.mail',
-            'password'=>'12341234',
-            'password_confirmation'=>'12341234',
-        ]);
-
-        $response->assertStatus(200);
-
-        $this->assertCount(1, User::all());
-
-        $user = User::first();
-
-        $this -> assertEquals($user->name, 'Anonymous');
-        $this -> assertEquals($user->email, 'max@mail.mail');
-
-
-    }
-
-    /** @test */
-    public function a_user_cannot_be_registered_if_name_is_not_string() {
-    
-        $response = $this->post('v1/register', [
-            'name' => 123,
-            'email' => 'manuel@mail.mail',
-            'password'=>'12341234',
-            'password_confirmation'=>'12341234',
-        ]);
-
-        $this->assertCount(0, User::all());
-
-        $response->assertStatus(422);
-        $response->assertJson([
-            'name' => [
-              0 =>  'The name field must be a string.'
-            ]
-        ]);
-    
-    }
-
-
-    /** @test */
-    public function a_user_cannot_be_registered_if_name_is_too_long() {
-    
-        $response = $this->post('v1/register', [
-            'name' => 'Manuelabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcde',
-            'email' => 'manuel@mail.mail',
-            'password'=>'12341234',
-            'password_confirmation'=>'12341234',
-        ]);
-
-        $this->assertCount(0, User::all());
-
-        $response->assertStatus(422);
-        $response->assertJson([
-            'name' => [
-              0 =>  'The name field must not be greater than 255 characters.'
-            ]
-        ]);
-    
-    }
-
-
-    /** @test */
-    public function a_user_cannot_be_registered_if_email_is_null()
-    {
-        
-        $response = $this->post('v1/register', [
-            'name' => 'Max Gol',
-            'email' => '',
-            'password'=>'12341234',
-            'password_confirmation'=>'12341234',
-        ]);
-
-        $this->assertCount(0, User::all());
-
-        $response->assertStatus(422);
-        $response->assertJson([
-            'email' => [
-              0 =>  'The email field is required.'
-            ]
-        ]);
-    
-    }
-
-
-    /** @test */
-    public function a_user_cannot_be_registered_if_email_is_not_string() {
-    
-        
-        $response = $this->post('v1/register', [
-            'name' => 'Max Gol',
-            'email' => 1234,
-            'password'=>'12341234',
-            'password_confirmation'=>'12341234',
-        ]);
-
-        $this->assertCount(0, User::all());
-
-        $response->assertStatus(422);
-        $response->assertJson([
-            'email' => [
-              0 =>  'The email field must be a string.'
-            ]
-        ]);
-    
-    }
-
-
-    /** @test */
-    public function a_user_cannot_be_registered_if_email_is_not_email() {
-    
-        
-        $response = $this->post('v1/register', [
-            'name' => 'Max Gol',
-            'email' => 'maxmailmail',
-            'password'=>'12341234',
-            'password_confirmation'=>'12341234',
-        ]);
-
-        $this->assertCount(0, User::all());
-
-        $response->assertStatus(422);
-        $response->assertJson([
-            'email' => [
-              0 =>  'The email field must be a valid email address.'
-            ]
-        ]);
-    
-    } 
-    
-
-    /** @test */
-    public function a_user_cannot_be_registered_if_email_is_too_long(){
-
-        $response = $this->post('v1/register', [
-            'name' => 'Max Gol',
-            'email' => 'abcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcde@mail.mail',
-            'password'=>'12341234',
-            'password_confirmation'=>'12341234',
-        ]);
-
-        $this->assertCount(0, User::all());
-
-        $response->assertStatus(422);
-        $response->assertJson([
-            'email' => [
-              0 =>  'The email field must not be greater than 255 characters.'
-            ]
-        ]);
-
-    } 
-
-
-    /** @test */
-    public function a_user_cannot_be_registered_if_email_is_not_unique(){
+   public function a_user_can_update_his_name_if_name_is_null(){
 
         $user = User::create([
-            'name'=>'Max',
-            'email'=>'max@mail.mail',
+            'name'=>'Alex',
+            'email'=>'alex@mail.mail',
             'password'=>bcrypt($password='saturday')
         ]);
 
-        $response = $this->post('v1/register', [
-            'name' => 'Max Gol',
-            'email' => 'max@mail.mail',
-            'password'=>$password,
-            'password_confirmation'=>$password
+        $response =  $this->post('v1/users/login', [
+        'email' => 'alex@mail.mail',
+        'password' =>$password
+        ]);
+
+        $this->assertAuthenticatedAs($user);
+
+        $this->actingAs($user, 'api');
+
+        $response = $this -> put('v1/users/' .$user->id, [
+            'name' => ''
+        ]);
+
+        $response->assertOk();
+
+        $this->assertCount(1, User::all());
+
+        $user = $user -> fresh();
+
+        $this -> assertEquals($user->name,'Anonymous');
+
+    }
+
+
+    /** @test */
+   public function a_user_cannot_be_updated_if_name_is_not_string(){
+
+        $user = User::create([
+            'name'=>'Alex',
+            'email'=>'alex@mail.mail',
+            'password'=>bcrypt($password='saturday')
+        ]);
+
+        $response =  $this->post('v1/users/login', [
+        'email' => 'alex@mail.mail',
+        'password' =>$password
+        ]);
+
+        $this->assertAuthenticatedAs($user);
+
+        $this->actingAs($user, 'api');
+
+        $response = $this -> put('v1/users/' .$user->id, [
+            'name' => 12345
+        ]);
+
+        $response->assertStatus(422);
+
+        $response->assertJson([
+            'name' => [
+            0 =>  'The name field must be a string.'
+            ]
         ]);
 
         $this->assertCount(1, User::all());
 
-        $response->assertStatus(422);
-        $response->assertJson([
-            'email' => [
-              0 =>  'The email has already been taken.'
-            ]
-        ]);
+        $user = $user -> fresh();
+
+        $this -> assertEquals($user->name,'Alex');
+
     }
 
-    /** @test */
-    public function a_user_cannot_be_registered_if_password_is_null() {
     
-        $response = $this->post('v1/register', [
-            'name' => 'Max Gol',
-            'email' => 'maxmailmail',
-            'password'=>'',
-            'password_confirmation'=>'12341234',
+    /** @test */
+    public function a_user_can_unsubscribe(){
+
+        $user = User::create([
+            'name'=>'Alex',
+            'email'=>'alex@mail.mail',
+            'password'=>bcrypt($password='password')
         ]);
+
+        $response =  $this->post('v1/users/login', [
+            'email' => 'alex@mail.mail',
+            'password' =>$password
+        ]);
+ 
+        $this->assertAuthenticatedAs($user);
+
+        $this->actingAs($user, 'api');
+
+        $response =  $this->delete('v1/users/' .$user->id, [
+            
+        ]);
+
+        $response->assertOk();
 
         $this->assertCount(0, User::all());
 
-        $response->assertStatus(422);
-        $response->assertJson([
-            'password' => [
-              0 =>  'The password field is required.'
-            ]
-        ]);
-    
-    } 
+    }
 
 
     /** @test */
-    public function a_user_cannot_be_registered_if_password_is_not_string() {
-    
-        $response = $this->post('v1/register', [
-            'name' => 'Max Gol',
-            'email' => 'maxmailmail',
-            'password'=> 12345,
-            'password_confirmation'=>'12341234',
+    public function a_user_cannot_retrieve_users_list(){
+
+        $user = User::create([
+            'name'=>'Alex',
+            'email'=>'alex@mail.mail',
+            'password'=>bcrypt($password='password')
         ]);
 
-        $this->assertCount(0, User::all());
+        $response =  $this->post('v1/users/login', [
+            'email' => 'alex@mail.mail',
+            'password' =>$password
+        ]);
+ 
+        $this->assertAuthenticatedAs($user);
 
-        $response->assertStatus(422);
+        $this->actingAs($user, 'api');
+
+  
+        $response = $this->withHeaders(['Accept'=> 'application/json'])->get('v1/users');
+        
+        
         $response->assertJson([
-            'password' => [
-              0 =>  'The password field must be a string.'
-            ]
+            'message' => 'This action is unauthorized.'
         ]);
+        
+        $response->assertStatus(403);
+        
+        $this->assertCount(1, User::all());
+
+    }
     
-    } 
 
 
-    /** @test */
-    public function a_user_cannot_be_registered_if_password_is_too_short() {
+
+
     
-        $response = $this->post('v1/register', [
-            'name' => 'Max Gol',
-            'email' => 'maxmailmail',
-            'password'=> '1234',
-            'password_confirmation'=>'1234',
-        ]);
-
-        $this->assertCount(0, User::all());
-
-        $response->assertStatus(422);
-        $response->assertJson([
-            'password' => [
-              0 =>  'The password field must be at least 8 characters.'
-            ]
-        ]);
-    
-    } 
-
-
-    /** @test */
-    public function a_user_cannot_be_registered_if_password_is_not_confirmed() {
-    
-        $response = $this->post('v1/register', [
-            'name' => 'Max Gol',
-            'email' => 'maxmailmail',
-            'password'=> '12341234',
-            'password_confirmation'=>'45454545',
-        ]);
-
-        $this->assertCount(0, User::all());
-
-        $response->assertStatus(422);
-        $response->assertJson([
-            'password' => [
-              0 =>  'The password field confirmation does not match.'
-            ]
-        ]);
-    
-    } 
 
 
 } 

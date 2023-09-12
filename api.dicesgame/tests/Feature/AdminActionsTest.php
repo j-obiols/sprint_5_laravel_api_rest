@@ -83,7 +83,7 @@ class AdminActionsTest extends TestCase {
 
 
     /** @test */
-    public function admin_can_delete_a_player_games_list() {
+    public function admin_can_delete_a_player_game_list() {
 
         $this -> seed(RoleSeeder::class);
         
@@ -425,6 +425,54 @@ class AdminActionsTest extends TestCase {
         $this->assertCount(3, User::all());
         $this->assertCount(2, Player::all());
         $this->assertCount(6, Game::all());
+    }
+
+
+    /** @test */
+    public function admin_cannot_change_a_user_name(){
+
+        $this -> seed(RoleSeeder::class);
+
+        $admin = User::create([
+            'name'=>'Admin',
+            'email'=>'admin@mail.mail',
+            'password'=>bcrypt($password1='saturday')
+        ]);
+
+        $admin->assignRole('admin');
+
+        $user = User::create([
+            'name'=>'Alex',
+            'email'=>'alex@mail.mail',
+            'password'=>bcrypt($password2='password')
+        ]);
+
+        $response =  $this->post('v1/users/login', [
+            'email' => 'admin@mail.mail',
+            'password' =>$password1
+        ]);
+
+        $this->assertAuthenticatedAs($admin);
+
+        $this->actingAs($admin, 'api');
+
+        $response = $this -> put('v1/users/' .$user->id, [
+            'name' => 'Joan Manuel'
+        ]);
+
+        $response->assertStatus(401);
+        $response->assertJson([
+            'errors' => [
+                'message' =>  'Unauthorized.'
+            ]
+        ]);
+
+        $this->assertCount(2, User::all());
+
+        $user = $user -> fresh();
+
+        $this -> assertEquals($user->name,'Alex');
+
     }
 
 }

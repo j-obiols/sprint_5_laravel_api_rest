@@ -68,15 +68,22 @@ In this case, the API will order them comparing their number of total games. The
 In case the number of total games was also identical, the API would decide positions by flipping a virtual coin. 
 
 ## Testing from Visual Studio Code
+
 (...)
+
 php artisan test
+
 (sometimes it's necessary to run also:
 php artisan cache:clear)
 
 ## Testing from Postman
+
 (...)
+
 php artisan migrate:fresh --seed
+
 php artisan passport:install
+
 php artisan serve
 
 ## Routes included

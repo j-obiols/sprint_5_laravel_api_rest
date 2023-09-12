@@ -27,30 +27,34 @@ class GameController extends Controller {
     }
     
     
-    public function store() {
+    public function store($id) {
     
         /** @var \App\Models\MyUserModel $user **/
         $user = auth()->user();
 
         $player = $user->player;
 
-        if($player) {
- 
-            $game = Game::create([
-                'dice1'=>random_int(1,6),
-                'dice2'=>random_int(1,6),
-                'gameResult'=>'',
-                'player_id'=>$player->id
-            ]);
+        if ($id != $player->id) {
+            throw new GeneralJsonException(message: 'Unauthorized.', code: 401);
+        }
+
+        if(!$player){
+            throw new GeneralJsonException(message: 'Something went wrong. Please try again', code: 404);
+        }
+
+        $game = Game::create([
+            'dice1'=>random_int(1,6),
+            'dice2'=>random_int(1,6),
+            'gameResult'=>'',
+            'player_id'=>$player->id
+        ]);
             
-            $game->save();
+        $game->save();
 
-            $player->checkAndStore($game);
+        $player->checkAndStore($game);
         
-            return GameResource::make($game);
+        return GameResource::make($game);
 
-        } 
-        
     }
 
 

@@ -115,10 +115,9 @@ class UserController extends Controller{
         /** @var \App\Models\MyUserModel $user **/
         $user = Auth::User();
 
-        if(($user ->id) != $id) {
-
+        if ($id != $user->id) {
             throw new GeneralJsonException(message: 'Unauthorized', code: 401);
-        }
+        }  
         
         return UserResource::make($user);
     }
@@ -143,7 +142,7 @@ class UserController extends Controller{
         $user = Auth::User();
        
         if ($id != $user->id) {
-            throw new GeneralJsonException(message: 'Unauthorized', code: 401);
+            throw new GeneralJsonException(message: 'Unauthorized.', code: 401);
         }  
         
         $validator = Validator::make($request->all(), [ 

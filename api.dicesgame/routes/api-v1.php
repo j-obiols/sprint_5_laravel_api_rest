@@ -23,7 +23,7 @@ Route::post('/users/login', [UserController::class, 'login'])->name('user.login'
 
 Route::middleware(['auth:api'])->group(function() {
 
-    Route::get('/users/logout', [UserController::class, 'logout'])->name('users.logout');
+    Route::post('/users/logout', [UserController::class, 'logout'])->name('users.logout');
     Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');

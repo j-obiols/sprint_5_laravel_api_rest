@@ -18,12 +18,12 @@ use App\Http\Controllers\Api\GameController;
 */
 
 
-Route::post('users/register', [UserController::class, 'store'])->name('user.create');
-Route::post('users/login', [UserController::class, 'login'])->name('user.login');
+Route::post('/users/register', [UserController::class, 'store'])->name('user.create');
+Route::post('/users/login', [UserController::class, 'login'])->name('user.login');
 
 Route::middleware(['auth:api'])->group(function() {
 
-    Route::post('users/logout', [UserController::class, 'logout'])->name('users.logout');
+    Route::get('/users/logout', [UserController::class, 'logout'])->name('users.logout');
     Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');

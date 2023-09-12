@@ -89,6 +89,10 @@ class UserController extends Controller{
 
         $accessToken = $user->createToken('authToken')->accessToken;
 
+        if(!$accessToken){
+            throw new GeneralJsonException(message: 'Something went wrong. Please try again', code: 404);
+        }
+
         return response([$user, $accessToken]);
 
     }
@@ -99,10 +103,6 @@ class UserController extends Controller{
         /** @var \App\Models\MyUserModel $user **/
         $user = Auth::User();
 
-        if(!$user){
-            throw new GeneralJsonException(message: 'Unauthorized', code: 401);
-        }
-
         $user -> token()->revoke();
 
         return UserLogoutResource::make($user);
@@ -110,40 +110,41 @@ class UserController extends Controller{
     }
 
     
-    public function show() {
+    public function show($id) {
     
         /** @var \App\Models\MyUserModel $user **/
         $user = Auth::User();
+
+        if(($user ->id) != $id) {
+
+            throw new GeneralJsonException(message: 'Unauthorized', code: 401);
+        }
         
-        if(!$user){
-            throw new GeneralJsonException(message: 'Unauthorized', code: 401);
-        }
-
         return UserResource::make($user);
     }
 
     
-    public function edit() {
+    public function edit($id) {
     
         /** @var \App\Models\MyUserModel $user **/
         $user = Auth::User();
 
-        if(!$user){
+        if ($id != $user->id) {
             throw new GeneralJsonException(message: 'Unauthorized', code: 401);
-        }
+        }  
 
         return UserResource::make($user);
     }
 
 
-    public function update(Request $request) {
+    public function update(Request $request, $id) {
  
         /** @var \App\Models\MyUserModel $user **/
         $user = Auth::User();
-
-        if(!$user){
+       
+        if ($id != $user->id) {
             throw new GeneralJsonException(message: 'Unauthorized', code: 401);
-        }
+        }  
         
         $validator = Validator::make($request->all(), [ 
             'name'=>'nullable|string|max:255|regex:/^([^0-9]*)$/'
@@ -170,14 +171,14 @@ class UserController extends Controller{
     }
 
 
-    public function destroy() {
+    public function destroy($id) {
 
         /** @var \App\Models\MyUserModel $user **/
         $user = Auth::User();
 
-        if(!$user){
+        if ($id != $user->id) {
             throw new GeneralJsonException(message: 'Unauthorized', code: 401);
-        }
+        }  
 
         $user -> delete();
         

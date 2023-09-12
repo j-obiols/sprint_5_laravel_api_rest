@@ -54,7 +54,7 @@ class PlayerManagementTest extends TestCase
     
 
     /** @test */
-    public function existing_player_in_database_is_retrieved() {
+    public function an_existing_player_in_database_can_be_retrieved() {
 
         $this -> seed(RoleSeeder::class);
         
@@ -135,6 +135,49 @@ class PlayerManagementTest extends TestCase
         
         $this->assertCount(1, User::all());
         $this->assertCount(1, Player::all());
+
+    }
+
+
+    /** @test */
+    public function a_player_cannot_retrieve_a_list_of_users() {
+
+        $this -> seed(RoleSeeder::class);
+
+        $user = User::create([
+            'name'=>'Alex',
+            'email'=>'alex@mail.mail',
+            'password'=>bcrypt($password='password')
+        ]);
+
+
+        $player = Player::create([
+            'numberOfGames' => 5,
+            'wonGames' => 1,
+            'percentWon'=> 20,
+            'user_id'=>$user->id
+        ]);
+
+        $player->user->assignRole('player');
+
+        $response =  $this->post('v1/users/login', [
+            'email' => 'alex@mail.mail',
+            'password' =>$password
+        ]);
+ 
+        $this->assertAuthenticatedAs($user);
+
+        $this->actingAs($user, 'api');
+
+        $response = $this->withHeaders(['Accept'=> 'application/json'])->get('v1/users');
+        
+        $response->assertJson([
+            'message' => 'This action is unauthorized.'
+        ]);
+        
+        $response->assertStatus(403);
+        
+        $this->assertCount(1, User::all());
 
     }
 

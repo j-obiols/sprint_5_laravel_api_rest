@@ -78,7 +78,7 @@ php artisan cache:clear)
 
 ## Testing from Postman
 
-(...)
+In terminal Visual Studio Code, run:
 
 php artisan migrate:fresh --seed
 
@@ -86,6 +86,92 @@ php artisan passport:install
 
 php artisan serve
 
-## Routes included
+## Routes  
+
+[POST /users/register](#post-usersregister)
+
+[POST /users/login](#post-userslogin)
+
+[POST /users/logout](#post-userslogout)
+
+[GET /users/id](#get-usersid)
+
+[GET /users/id/edit](#get-usersidedit)
+
+[PUT /users/id](#put-usersid)
+
+(...)
+
+# POST /users/register 
+
+### A new user can get registered. 
+
+![users_register](https://github.com/j-obiols/sprint_5_laravel_api_rest/assets/127688372/9b043163-b2df-4c5b-81a1-7d48a448ed4e)
+
+# POST /users/login 
+
+### A registered user can log in. A bearer token is received.
+
+# POST /users/logout
+
+### A user can log out.
+
+# GET /users/id
+
+### A user can see his data as a User: name and email.
+
+# GET /users/id/edit
+
+### A user can edit his name.
+
+# PUT /users/id
+
+### A user can update his name.
+
+# DELETE /users/id
+
+### A user can unsubscribe.
+
+# GET /users/id
+
+### A user assigned with role 'admin' can retrieve a users list.
+
+# POST /players
+
+### A user can became a (this game) player, get assigned with the role '(this game) player' and/or go the real start playing view (if he was already a (this game) player).
+
+# GET /players
+
+### A user assigned with role 'Admin' can retrieve a (this game) players list.
+
+# POST /players/{id}/games
+
+### A (this game) player (from creation assigned with role '(this game) player') can make a new two dices roll, and get the result (in this case, or whatever was the game, if other games were added).
+
+# GET /players/{id}/games
+
+### A (this game) player (from creation assigned with role '(this game) player') can get a list of all his games whith his results.
+
+# DELETE /players/{id}/games
+
+### A user assigned with role 'admin' can delete a (this game) player games list.
+
+# GET /players/ranking
+
+### A user assigned with role 'admin' and a (this game) player (from creation assigned with role '(this game) player') can see the (this game) ranking.
+
+#  GET /players/winner
+
+### A user assigned with role 'admin' and a (this game) player (from creation assigned with role '(this game) player') can see the winner, together with the average percent Won.
+
+#  GET /players/loser
+
+### A user assigned with role 'admin' and a (this game) player (from creation assigned with role '(this game) player') can see the (this game) ranking, together with the average percent Won.
+
+
+
+
+
+
 
 (...)

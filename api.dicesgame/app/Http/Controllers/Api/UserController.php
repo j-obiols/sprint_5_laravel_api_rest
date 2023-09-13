@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserLogoutResource;
 use App\Http\Resources\UserDeleteResource;
-Use App\Http\Resources\UserListResource;
+use App\Http\Resources\UserListResource;
 
 
 class UserController extends Controller{
@@ -53,10 +53,9 @@ class UserController extends Controller{
         $user = User::create([
             'name' => $validated['name']??'Anonymous',
             'email' => $validated['email'],
-            'password' => $validated['password'],
+            'password' => bcrypt($validated['password']),
         ]);
 
-        $user->save();
         
         if(!$user){
             throw new GeneralJsonException(message: 'Something went wrong. Please try again', code: 404);
@@ -93,7 +92,7 @@ class UserController extends Controller{
             throw new GeneralJsonException(message: 'Something went wrong. Please try again', code: 404);
         }
 
-        return response([$user, $accessToken]);
+        return response()->json(['data' =>['name'=>$user->name, 'email'=>$user->email, 'token'=>$accessToken]]);
 
     }
 

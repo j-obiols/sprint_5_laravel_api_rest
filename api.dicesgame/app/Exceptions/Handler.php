@@ -4,9 +4,12 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Http\Request;
+use Spatie\Permission\Exceptions\UnauthorizedException;
 
-class Handler extends ExceptionHandler
-{
+
+class Handler extends ExceptionHandler {
+
     /**
      * The list of the inputs that are never flashed to the session on validation exceptions.
      *
@@ -23,8 +26,11 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
+        /*$this->reportable(function (Throwable $e) {
             //
-        });
+        });*/
+
     }
+    
+    
 }

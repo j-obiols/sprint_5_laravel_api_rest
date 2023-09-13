@@ -7,12 +7,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 use App\Models\Player;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasRoles, HasApiTokens, HasFactory, Notifiable;
+
+    protected function getDefaultGuardName(): string { 
+        return 'web'; 
+    }
+
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +30,7 @@ class User extends Authenticatable
         'email',
         'password',
     ];
+    
 
     /**
      * The attributes that should be hidden for serialization.
@@ -35,6 +42,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+
     /**
      * The attributes that should be cast.
      *
@@ -45,10 +53,18 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+
     //One To One Relationship
     public function player(){
 
         return $this->hasOne(Player::class);
+
+    }
+
+
+    public function setName($name){
+
+        $this->name = $name;
 
     }
 }
